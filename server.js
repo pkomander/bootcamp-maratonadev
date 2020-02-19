@@ -9,60 +9,69 @@ server.use(express.static('public'))
 //habilitar body do formulario
 server.use(express.urlencoded({extended: true}))
 
-//configurando a template engine
-const nunjucks = require("nunjucks")
-nunjucks.configure("./", {//objeto
-    express: server
-    noCache: true,//boolean ou booleano
+
+
+//configurar a conexão com o banco de dados
+const Pool = require("pg").Pool;
+const db = new Poll({
+    user: 'postgres',
+    password: 'araujo2025',
+    host: 'localhost',
+    port: 5432,
+    database: 'doe'
 })
 
 
-//lista de doadores: vetor ou array
-const donors = [//array
-    {objeto
-        name: "Paulo Ricardo",
-        blood: "AB+"
-    },
-    {objeto
-        name: "Diego Fernandes",
-        blood: "B+"
-    },
-    {objeto
-        name: "João Vitor",
-        blood: "A+"
-    },
-    {objeto
-        name: "Caio Felipe",
-        blood: "O+"
-    }
-]
 
-
-
-
+//configurando a template engine
+//objeto nas { }
+const nunjucks = require("nunjucks")
+nunjucks.configure("./", {
+    express: server,
+    noCache: true,
+})
 
 
 
 //configurar a apresentação da página
 server.get("/", function(req, res) {
-    return res.render("index.html", { donors })
+    db,query("SELECT * FROM donors", function(err, result){
+        if (err) return res.send("Erro de banco de dados.")
+
+        const donors = result.rows;
+        return res.render("index.html", { donors })
+    })
+    
 })
 
-server.post("/", function(req, res)){
-    //pegar dados do formulario
+server.post("/", function(req, res) {
+    //pegar dados do formulario -> requirit
     const name = req.body.name
     const email = req.body.email
     const blood = req.body.blood
 
+    if (name == "" || email == "" || blood == ""){
+        return res.send("Todos os campos são obrigatorios.")
+    }
 
-    //coloco valores dentro do array
-    donors.push({
-        name: name,
-        blood: blood,
+
+
+    //coloco valores dentro do banco de dados
+    const query = 
+        `INSERT INTO donors ("name", "email", "blood")
+        VALUES($1, $2, $3)`
+
+    const values = [name, email, blood]
+
+    db.query(query, values, function(err){
+        //fluxo de erro
+        if (err) return res.send("erro no banco de dados.")
+        
+        //fluxo ideal
+        return res.redirect("/")
     })
 
-    return res.redirect("/")
-}
+});
 
 
 //ligar o servidor e permitir o acesso na porta 3000
