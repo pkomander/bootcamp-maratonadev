@@ -62,34 +62,22 @@ para escrita.
 
     <main>
         <h2>Últimos <span>doadores</span></h2>
-
+            <!--<p>objeto e propriedade blood-donor.blood</p>-->
             <section class="donors">
-
+                
                 {% for donor in donors %}
 
                     <div class="donor">
                         <div class="blood">{{donor.blood}}</div>
                         <p>{{donor.name}}</p>
-                            <!--{{objeto e propriedade}}-->
                     </div>
                     
-                {%endfor}
+                {%endfor%}
 
 
-                <!--não sera mais utilizado-->
-                <!--<div class="donor">
-                    <div class="blood">B+</div>
-                    <p>Diego Fernandes</p>
-                </div>
-                <div class="donor">
-                    <div class="blood">A+</div>
-                    <p>João Vitor</p>
-                </div>
-                <div class="donor">
-                    <div class="blood">O+</div>
-                    <p>Caio Felipe</p>
-                </div>-->
+                
             </section>
+            
     </main>
 
     <footer>Com ❤ Rocketseat</footer>
